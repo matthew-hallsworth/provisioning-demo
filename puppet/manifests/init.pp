@@ -1,0 +1,3 @@
+
+include nginx
+include '::php'

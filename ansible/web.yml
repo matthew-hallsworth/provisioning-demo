@@ -1,0 +1,69 @@
+---
+- hosts: all
+  become: yes
+  vars:
+    api_php_version: 7.2
+
+  handlers:
+  - name: Restart NGINX
+    service:
+      name: nginx
+      state: restarted
+
+  tasks:
+  - name: Add the PPA we need for packages
+    apt_repository:
+      state: present
+      repo: "{{item}}"
+      update_cache: yes
+    with_items:
+      - ppa:ondrej/php
+  - name: Install required packages
+    apt:
+      name: "{{ packages }}"
+    vars:
+      packages:
+      - wget
+      - git
+      - build-essential
+      - php{{ api_php_version }}-cli
+      - php{{ api_php_version }}-curl
+      - php{{ api_php_version }}-xml
+      - php{{ api_php_version }}-zip
+      - php{{ api_php_version }}-gd
+      - php{{ api_php_version }}-mysql
+      - php{{ api_php_version }}-mbstring
+      - php{{ api_php_version }}-bcmath
+      - php{{ api_php_version }}-fpm
+      - php{{ api_php_version }}-imap
+      - php{{ api_php_version }}-intl
+      - php{{ api_php_version }}-soap
+
+  - name: Add the PPA for NGINX
+    apt_repository:
+      state: present
+      repo: "{{item}}"
+      update_cache: yes
+    with_items:
+      - ppa:nginx/stable
+
+  - name: Install NGINX
+    apt:
+      name: nginx
+      state: present
+
+  - name: Install NGINX config
+    template:
+      src: ./nginx-conf.j2
+      dest: /etc/nginx/sites-available/default
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+      - Restart NGINX
+
+  - name: Start NGINX
+    service: name=nginx state=started enabled=yes
+
+  - name: Start FPM
+    service: name=php{{ api_php_version }}-fpm state=started enabled=yes

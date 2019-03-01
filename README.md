@@ -24,3 +24,13 @@ vagrant destroy -f; vagrant up
 ```
 
 Then load http://localhost:8000 and see a lucky number! It works!
+
+## Homestead/Vagrant
+
+```
+cp Vagrantfile.homestead Vagrantfile
+vagrant destroy -f; vagrant up
+```
+
+After a long build process, you should load http://localhost:8000 and see a lucky number! It also works!
+

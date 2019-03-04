@@ -2,9 +2,13 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "puppetlabs/centos-7.2-64-puppet"
+  config.vm.box = "bento/ubuntu-18.04"
   config.vm.network "forwarded_port", guest: 80, host: 8000
-  config.vm.synced_folder ".", "/var/www"
+  config.vm.synced_folder ".", "/var/www/site", id: "unique-id", type: nil,
+      group: 'www-data', owner: 'www-data', mount_options: ["dmode=775", "fmode=764"]
+
+  config.vm.provision "shell", path: "puppet/install_puppet.sh"
+
   config.vm.provision :puppet do |puppet|
     puppet.manifests_path = "puppet/manifests"
     puppet.module_path    = "puppet/modules"

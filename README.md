@@ -14,7 +14,7 @@ cp Vagrantfile.puppet Vagrantfile
 vagrant destroy -f; vagrant up
 ```
 
-You'll notice that this doesn't work. It's a work in progress.
+Then load http://localhost:8000 and see a lucky number! It works!
 
 ## Ansible/Vagrant
 
